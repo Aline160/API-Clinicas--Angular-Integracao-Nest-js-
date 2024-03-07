@@ -13,10 +13,10 @@ import { ToastService } from 'src/app/services/toast.service';
 export class PageHomeComponent {
 
   constructor(
-    private route: Router, 
+    private route: Router,
     private authService: AuthService,
     private toastService: ToastService,
-  ){}
+  ) { }
 
   form: FormGroup = new FormGroup({
     identifier: new FormControl('', [Validators.required]),
@@ -24,20 +24,18 @@ export class PageHomeComponent {
   });
 
   login() {
-
     const { identifier: cpf, password } = this.form.value;
 
     this.authService.login(cpf, password)
-    .subscribe({
-      next: (value: any) => {
-        console.log(value);
-
-        this.route.navigate([RoutesEnum.SESSION_LIST]);
-      },
-      error: (err: any) => {
-        this.toastService.showError(err?.error?.message);
-      },
-    });
+      .subscribe({
+        next: (value: any) => {
+          console.log('Token recebido:', value.accessToken);
+          localStorage.setItem('auth_token', value.accessToken);
+          this.route.navigate([RoutesEnum.SESSION_LIST]);
+        },
+        error: (err: any) => {
+          this.toastService.showError(err?.error?.message);
+        },
+      });
   }
-
 }

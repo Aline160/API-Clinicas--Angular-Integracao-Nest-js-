@@ -6,12 +6,15 @@ import { PageListComponent } from './pages/page-list/page-list.component';
 import { RoutesEnum } from './enums/routes.enum';
 import { SecureAreaComponent } from './components/layout/secure-area/secure-area.component';
 import { PageInfoComponent } from './pages/page-info/page-info.component';
+import { AuthGuard } from './services/authGuard.service';
+
 
 const routes: Routes = [
   { path: 'home', component: PageHomeComponent },
-  { 
+  {
     path: 'session',
     component: SecureAreaComponent,
+    canActivate: [AuthGuard],
     children: [
       { path: 'list', component: PageListComponent },
       { path: 'edit/:id', component: PageInfoComponent },
@@ -22,8 +25,10 @@ const routes: Routes = [
   { path: "", redirectTo: "home", pathMatch: "full" }
 ];
 
+
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  providers: [AuthGuard]
 })
 export class AppRoutingModule { }

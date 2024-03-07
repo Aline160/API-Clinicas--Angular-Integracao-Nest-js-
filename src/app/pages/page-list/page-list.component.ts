@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { ClincDTO } from 'src/app/dtos/clinc.dto';
 import { RoutesEnum } from 'src/app/enums/routes.enum';
 import { ClincService } from 'src/app/services/clinc.service';
@@ -12,61 +12,44 @@ import { ToastService } from 'src/app/services/toast.service';
 })
 export class PageListComponent implements OnInit {
 
-  clinics: ClincDTO[] = [
-    {
-      id: 2,
-      name: 'Clinca exemplo A',
-      phone: '81994381298',
-      ownerName: 'Avelino Alonso',
-      cep: '52020213',
-      uf: 'PE',
-      city: 'Recife',
+  clinics: ClincDTO[] = []
 
-      neighborhood: 'Espinheiro',
-      street: 'Rua do Espinheiro',
-      number: '190',
-      complement: 'Ao lado esquerdo, placa da Clin'
-    },
-    {
-      id: 3,
-      name: 'Clinca exemplo B',
-      phone: '819948301',
-      ownerName: 'Pedro Henrique',
-      cep: '52020213',
-      uf: 'PE',
-      city: 'Recife',
 
-      neighborhood: 'Espinheiro',
-      street: 'Rua do Espinheiro',
-      number: '160',
-      complement: 'Ao lado esquerdo, placa da Clin'
-    },
-    {
-      id: 4,
-      name: 'Clinca exemplo C',
-      phone: '819948301',
-      ownerName: 'Antonio',
-      cep: '52020200',
-      uf: 'PE',
-      city: 'Recife',
-
-      neighborhood: 'Espinheiro',
-      street: 'Rua do Espinheiro',
-      number: '160',
-      complement: 'Ao lado esquerdo, placa da Clin'
-    }
-  ]
 
   constructor(
     private clincService: ClincService,
     private toastService: ToastService,
     private route: Router,
-  ){}
+  ) { }
+
+
 
   ngOnInit(): void {
-    this.clincService.getAllClincs().subscribe({
-      next: (value: any[]) => {
-        console.log(value);
+    this.clincService.getAllClinics().subscribe({
+      next: (clinics: ClincDTO[]) => {
+        this.clinics = clinics;
+      },
+      error: (err: any) => {
+        this.toastService.showError(`Erro ao resgatar listagem de clínicas`);
+      }
+    });
+
+
+  }
+
+  redirectNewClinc() {
+    this.route.navigate([RoutesEnum.SESSION_NEW_CLINC]);
+  }
+
+  edit(clincId: any): void {
+    console.log(`Id da clínica: ${clincId}`);
+    this.route.navigate([`${RoutesEnum.SESSION_CLINC_INFO}/${clincId}`]);
+  }
+
+  loadClinics() {
+    this.clincService.getAllClinics().subscribe({
+      next: (clinics: ClincDTO[]) => {
+        this.clinics = clinics;
       },
       error: (err: any) => {
         this.toastService.showError(`Erro ao resgatar listagem de clínicas`);
@@ -74,17 +57,17 @@ export class PageListComponent implements OnInit {
     });
   }
 
-  redirectNewClinc(){
-    this.route.navigate([RoutesEnum.SESSION_NEW_CLINC]);
-  }
 
-  edit(clincId: any){
-    console.log(`Id da clínica: ${clincId}`);
-    this.route.navigate([`${RoutesEnum.SESSION_CLINC_INFO}/${clincId}`])
-  }
-
-  delete(clincId: any){
-    console.log(`Id da clínica: ${clincId} para deletar`);
+  delete(clinicId: any) {
+    this.clincService.deleteClinic(clinicId).subscribe({
+      next: () => {
+        this.toastService.showSuccess(`Clínica removida com sucesso`);
+        this.loadClinics();
+      },
+      error: (err: any) => {
+        this.toastService.showError(`Erro ao remover clínica`);
+      }
+    });
   }
 
 }

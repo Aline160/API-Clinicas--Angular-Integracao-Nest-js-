@@ -1,6 +1,7 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, retry } from 'rxjs';
+import { Router } from '@angular/router';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment.development';
 
 @Injectable({
@@ -8,7 +9,27 @@ import { environment } from 'src/environments/environment.development';
 })
 export class AuthService {
 
-  constructor(private http: HttpClient) { }
+  private readonly TOKEN_KEY = 'auth_token';
+
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) { }
+
+
+  getToken(): string | null {
+    return localStorage.getItem(this.TOKEN_KEY);
+  }
+
+  removeToken(): void {
+    localStorage.removeItem(this.TOKEN_KEY);
+  }
+
+  logout(): void {
+    this.removeToken();
+    this.router.navigate(['/login']);
+  }
+
 
   // TODO: Mapear DTOs para retorno do Backend
   login(cpf: string, password: string): Observable<any[]> {

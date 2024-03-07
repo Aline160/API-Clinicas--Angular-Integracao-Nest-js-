@@ -14,6 +14,7 @@ import { LayoutModule } from './components/layout/layout.module';
 import { NgxMaskModule } from 'ngx-mask';
 import { HttpClientModule } from '@angular/common/http';
 import { InfoClincPipe } from './pipes/info-clinc.pipe';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,7 @@ import { InfoClincPipe } from './pipes/info-clinc.pipe';
     CardsModule,
     LayoutModule,
   ],
-  providers: [],
+  providers: [AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

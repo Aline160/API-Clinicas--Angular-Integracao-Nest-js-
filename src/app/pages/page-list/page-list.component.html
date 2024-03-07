@@ -10,7 +10,7 @@
             *ngFor="let clinc of clinics"
             class="m-2"
             [title]="clinc.name" 
-            subtitle="Responsavel: {{clinc.ownerName}}"
+            subtitle="Responsavel: {{clinc.responsibleName}}"
             [info]="clinc | clincInfo"
     
             leftButtonLabel="Remover"
